@@ -1,0 +1,9 @@
+POST http://loginapi-env.eba-r3aguhvf.us-east-2.elasticbeanstalk.com/api/account/register HTTP/1.1
+content-type: application/json
+
+{   "firstName":"nguyen",
+    "lastName": "Son",
+    "email": "nguyenthanhson162001@gmail.com",
+
+    "password": "123"
+}
