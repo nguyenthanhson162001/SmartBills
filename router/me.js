@@ -5,6 +5,6 @@ const billsController = require('../app/controller/BillsController')
 const softMiddleware = require('../app/middlewarse/softMiddlewarse')
 
 router.get('/infomation', meController.infomation)
-router.get('/mybills', softMiddleware, billsController.myBills)
+
 
 module.exports = router

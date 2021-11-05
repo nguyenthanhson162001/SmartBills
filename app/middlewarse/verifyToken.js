@@ -6,7 +6,7 @@ module.exports =
             return res.status(401).send('Login require')
         try {
             const verified = jwt.verify(token, process.env.JWT_SECRET)
-            req.userID = verified
+            req.userID = verified._id
             next()
         } catch (error) {
             res.status(400).send('Invalid token')
