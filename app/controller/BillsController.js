@@ -4,6 +4,21 @@ class billsController {
     //[bill] api/bill/store
     async store(req, res) {
         const image = req.file
+        const { BillName,
+            companyName,
+            address,
+            taxCode,
+            numberBill,
+            bankAccountsNumber,
+            totalAmount,
+            vatAmount,
+            vatRate,
+            totalPayment,
+            datetime,
+            buyer,
+            seller,
+            owner,
+            item, } = req.body
         // upload to 3S
         if (!image)
             return res.status(400).send('required image')

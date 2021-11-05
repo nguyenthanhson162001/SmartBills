@@ -3,7 +3,6 @@ const userValidation = require('..//..//config/validation/userValidation')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
-
 class AccountController {
     // [POST] api/account/login
     async login(req, res, next) {
@@ -11,11 +10,7 @@ class AccountController {
         // validate the data before check
         const { error } = userValidation.loginValidation({ email, password })
         if (error) {
-            res.status(400).json({
-                status: false,
-                error: error.details[0].message,
-
-            })
+            send(false, error.details[0].message, '')
             return
         }
         // checking already exist
@@ -26,7 +21,6 @@ class AccountController {
         }
         const hasValidPassword = await bcryptjs.compare(password, user.password)
         if (!hasValidPassword) {
-
             send(false, 'Password not correct', '')
             return
         }
