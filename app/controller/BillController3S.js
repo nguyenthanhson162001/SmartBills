@@ -1,6 +1,6 @@
 const Bill = require('../models/bill')
 const { uploadFile, getFileStream } = require('../../config/aws/s3')
-const Paginatoin_soft = require('..//..//util/paginationAndSoft')
+const Paginatoin_soft = require('../../util/paginationAndSoft')
 const limit = 10
 const fs = require('fs')
 const util = require('util')

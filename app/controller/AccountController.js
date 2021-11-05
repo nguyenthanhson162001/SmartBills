@@ -13,43 +13,44 @@ class AccountController {
         if (error) {
             res.status(400).json({
                 status: false,
-                error: error.details[0].message
+                error: error.details[0].message,
+
             })
             return
         }
         // checking already exist
         const user = await User.findOne({ email })
         if (!user) {
-            res.status(400).json({
-                status: false,
-                error: 'Email not already exist'
-            })
+            send(false, 'Email not already exist', '')
             return
         }
         const hasValidPassword = await bcryptjs.compare(password, user.password)
         if (!hasValidPassword) {
-            res.status(400).json({
-                status: false,
-                error: 'Password not correct'
-            })
+
+            send(false, 'Password not correct', '')
             return
         }
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
         res.header('auth-token', token)
             .status(200).json({
                 status: true,
+                error: '',
                 auth_token: token
             })
+        function send(status, error, auth_token) {
+            res.status(400).json({
+                status,
+                error,
+                auth_token
+            })
+        }
     }
     // [POST] api/account/register
     async register(req, res, next) {
         const { email, password, firstName, lastName } = req.body
         const { error } = userValidation.registerValidation({ email, password, firstName, lastName })
         if (error) {
-            res.status(400).json({
-                status: false,
-                error: error.details[0].message
-            })
+            send(500, false, error.details[0].message)
             return
         }
         // hash password
@@ -57,10 +58,7 @@ class AccountController {
         // checking if the user is already in the database
         const emailExist = await User.findOne({ email })
         if (emailExist) {
-            res.status(400).json({
-                status: false,
-                error: 'Email already exist'
-            })
+            send(400, false, 'Email already exist')
             return
         }
 
@@ -76,14 +74,16 @@ class AccountController {
         })
         try {
             const saveUser = await user.save();
-            const token = jwt.sign({ _id: saveUser._id }, process.env.JWT_SECRET)
-            res.status(200).json({
-                status: true,
-                auth_token: token
-            })
+            // const token = jwt.sign({ _id: saveUser._id }, process.env.JWT_SECRET)
+            send(500, true, '')
+
         } catch (error) {
-            res.status(500).json({
-                status: false,
+            send(500, false, 'Server save error')
+        }
+        function send(numberStatus, status, error) {
+            res.status(numberStatus).json({
+                status,
+                error
             })
         }
     }
