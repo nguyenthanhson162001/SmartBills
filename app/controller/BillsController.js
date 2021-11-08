@@ -90,7 +90,8 @@ class billsController {
                     res.status(200).json({ status: true, error: "" })
                     fs.unlink(`${process.cwd()}/public/images/bills/${billOld.imageKey}`, function (err) {
                         if (err) throw err;
-                        // console.log('File deleted!');
+                        console.log('File deleted!');
+                        console.log(`${process.cwd()}/public/images/bills/${billOld.imageKey}`)
                     });
 
                 }).catch(err => {
