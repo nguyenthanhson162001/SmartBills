@@ -1,5 +1,6 @@
 const Bill = require('..//.//models/bill')
 const Paginatoin_soft = require('../../util/paginationAndSoft')
+const BillValidation = require('..//..//config/validation/billValidation')
 const limit = 10
 var fs = require('fs');
 const { throws } = require('assert');
@@ -7,18 +8,15 @@ class billsController {
     //[POST] api/bill/store
     async store(req, res) {
         const image = req.file
-        const { total, datetime, address, owner, item } = req.body
-
+        const { total, datetime, address, item } = req.body
         if (!image)
             return res.status(400).send('required image')
-        var bill = new Bill({ imageKey: image.filename, total, datetime, address, owner, owner: req.userID, item })
-
+        var bill = new Bill({ imageKey: image.filename, total, datetime, address, owner: req.userID, item })
         bill.save().then(function () {
             res.status(200).json({ status: true, error: "" })
         }).catch(function (err) {
             res.status(200).json({ status: false, error: err })
         })
-
     }
     // [GET] api/bill/bills
     async bills(req, res) {
@@ -45,44 +43,22 @@ class billsController {
     }
     // [PUT] api/bill/edit:id
     edit(req, res) {
-        const { BillName,
-            companyName,
-            address,
-            taxCode,
-            numberBill,
-            bankAccountsNumber,
-            totalAmount,
-            vatAmount,
-            vatRate,
-            totalPayment,
-            datetime,
-            buyer,
-            seller,
-            item, } = req.body
-        var bill = new Bill({
-            BillName,
-            companyName,
-            address,
-            taxCode,
-            numberBill,
-            bankAccountsNumber,
-            totalAmount,
-            vatAmount,
-            vatRate,
-            totalPayment,
-            datetime,
-            buyer,
-            seller,
-            item,
-        })
-
+        var { total, datetime, address, item } = req.body
+        var { error } = BillValidation.billValidation({ total, datetime, address })
+        if (item == undefined) {
+            item = []
+        }
+        if (error) {
+            res.status(200).json({ status: false, error: "Update false " + error })
+            return;
+        }
         // console.log({ _id: req.sparams.id, owner: req.userID })
         Bill.findOne({ _id: req.params.id, owner: req.userID }).then(function (billOld) {
             if (!billOld) {
                 throw 'Id bill not exist'
             }
-            console.log(JSON.stringify(bill))
-            return Bill.updateOne({ _id: req.params.id }, JSON.stringify(bill))
+            // console.log({ total, datetime, address, item })
+            return Bill.updateOne({ _id: req.params.id }, { total, datetime, address, item })
         })
             .then(() => {
                 res.status(200).json({ status: true, error: "" })
@@ -93,9 +69,7 @@ class billsController {
     }
     // [DELETE] api/bill/delete:id
     async delete(req, res) {
-
         var id = req.params.id
-
         Bill.findOne({ _id: req.params.id, owner: req.userID }).then(function (billOld) {
             if (!billOld) {
                 res.status(200).json({ status: false, error: "Delete false bill not exist" })

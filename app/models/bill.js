@@ -11,10 +11,10 @@ const Bill = new Schema({
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
     item: [
         {
+            _id: false,
             name: { type: String, maxLength: 255, default: "" },
             price: { type: Number, default: -1 },
             quantity: { type: Number, default: -1 },
-
         }
     ],
 
