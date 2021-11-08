@@ -7,41 +7,13 @@ class billsController {
     //[POST] api/bill/store
     async store(req, res) {
         const image = req.file
-        const { BillName,
-            companyName,
-            address,
-            taxCode,
-            numberBill,
-            bankAccountsNumber,
-            totalAmount,
-            vatAmount,
-            vatRate,
-            totalPayment,
-            datetime,
-            buyer,
-            seller,
-            item, } = req.body
+        const { total, datetime, address, owner, item } = req.body
 
         if (!image)
             return res.status(400).send('required image')
-        var bill = new Bill({
-            imageKey: image.filename,
-            BillName,
-            companyName,
-            address,
-            taxCode,
-            numberBill,
-            bankAccountsNumber,
-            totalAmount,
-            vatAmount,
-            vatRate,
-            totalPayment,
-            datetime,
-            buyer,
-            seller,
-            owner: req.userID,
-            item,
-        }).save().then(function () {
+        var bill = new Bill({ imageKey: image.filename, total, datetime, address, owner, owner: req.userID, item })
+
+        bill.save().then(function () {
             res.status(200).json({ status: true, error: "" })
         }).catch(function (err) {
             res.status(200).json({ status: false, error: err })
