@@ -5,6 +5,7 @@ class MeController {
         const user = await User.findOne({ _id: req.userID }).select('firstName lastName email')
         res.status(200).json(user);
     }
+    //[PUT] api/me/infomation
 }
 module.exports = new MeController();
 

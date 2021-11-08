@@ -1,6 +1,8 @@
 const Bill = require('..//.//models/bill')
 const Paginatoin_soft = require('../../util/paginationAndSoft')
 const limit = 10
+var fs = require('fs');
+const { throws } = require('assert');
 class billsController {
     //[POST] api/bill/store
     async store(req, res) {
@@ -86,7 +88,6 @@ class billsController {
             seller,
             item, } = req.body
         var bill = new Bill({
-            imageKey: image.filename,
             BillName,
             companyName,
             address,
@@ -100,36 +101,49 @@ class billsController {
             datetime,
             buyer,
             seller,
-            owner: req.userID,
             item,
         })
-        Bill.findOne({ _id: req.params.id }).then(function (billOld) {
-            if (!billOld) {
-                res.status(200).json({ status: true, error: "Update false" + err })
-                return
-            }
-            Bill.replaceOne({}, bill)
-                .then(() => {
-                    res.status(200).json({ status: true, error: "" })
-                })
-                .catch((err) => {
-                    res.status(200).json({ status: true, error: "Update false" + err })
-                })
-        }).catch((err) => {
-            res.status(200).json({ status: true, error: "Update false" + err })
-        })
 
+        // console.log({ _id: req.sparams.id, owner: req.userID })
+        Bill.findOne({ _id: req.params.id, owner: req.userID }).then(function (billOld) {
+            if (!billOld) {
+                throw 'Id bill not exist'
+            }
+            console.log(JSON.stringify(bill))
+            return Bill.updateOne({ _id: req.params.id }, JSON.stringify(bill))
+        })
+            .then(() => {
+                res.status(200).json({ status: true, error: "" })
+            })
+            .catch((err) => {
+                res.status(200).json({ status: false, error: "Update false " + err })
+            })
     }
     // [DELETE] api/bill/delete:id
     async delete(req, res) {
-        let { option, params, page } = Paginatoin_soft.paginatoin_soft(req, res, limit)
-        console.log(req.userID)
-        Bill.paginate({ deleted: false, owner: req.userID }, option)
-            .then((bill) => {
-                res.status(200).json(bill)
-            })
+
+        var id = req.params.id
+
+        Bill.findOne({ _id: req.params.id, owner: req.userID }).then(function (billOld) {
+            if (!billOld) {
+                res.status(200).json({ status: false, error: "Delete false bill not exist" })
+                return
+            }
+            Bill.deleteOne({ _id: id, owner: req.userID })
+                .then(() => {
+                    res.status(200).json({ status: true, error: "" })
+                    fs.unlink(`${process.cwd()}/public/images/bills/${billOld.imageKey}`, function (err) {
+                        if (err) throw err;
+                        // console.log('File deleted!');
+                    });
+
+                }).catch(err => {
+                    console.log(err)
+                    res.status(400).json({ status: false, error: "delete false " + err })
+                })
+        })
             .catch((err) => {
-                res.status(500).send('server error')
+                res.status(200).json({ status: false, error: "delete false bill not exist" })
             })
     }
 }
