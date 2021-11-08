@@ -44,33 +44,48 @@
     </div>
     <img src="http://localhost:3001/api/post/getimage/7a72b6a5a9f966421be56b4ea795a906" alt="">
     <script>
-        $(document).ready(function () {
-            $(`button[type='submit']`).on('click', function (e) {
-                // e.preventDefault();
-                var name = $(`input[name='name_post']`).val()
-                var image = $(`input[name='image']`).val()
-                console.table({ name, image })
-            })
-        });
+        // $(document).ready(function () {
+        //     $(`button[type='submit']`).on('click', function (e) {
+        //         // e.preventDefault();
+        //         var name = $(`input[name='name_post']`).val()
+        //         var image = $(`input[name='image']`).val()
+        //         console.table({ name, image })
+        //     })
+        // });
 
+        // var tokenID = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTE1Njk5OTUwNjY4MTNkYzg0ZjVjMGIiLCJpYXQiOjE2Mjg4NjExNTV9.pqKiuVabFR3nB3tmXjh53I_IQUbzFiwBts5jHzHv7Yg'
+        // fetch('http://smartbill-env.eba-bimkwri6.us-east-2.elasticbeanstalk.com/api/me/infomation',
+        //     {
+        //         method: "GET",
+        //         headers: {
+        //             Accept: "application/json",
+        //             "Content-Type": "application/json",
+        //             "Access-Control-Allow-Origin": '*',
+        //             "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+        //             "Access-Control-Allow-Credentials": "true",
+        //             "auth-token": tokenID
+        //         }
+        //         // body: JSON.stringify({
+        //         //     firstName: "Nguyen Son",
+        //         //     lastName: "Nguyen",
+        //         //     email: "nguyenthanhson162001@gmail.com",
+        //         //     password: "123456",
+        //         // }),
+        //     })
+        //     .then(function (response) {
+        //         return response.json();
+        //     })
+        //     .then(function (response) {
+        //         console.table(response)
+        //     });
         var tokenID = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTE1Njk5OTUwNjY4MTNkYzg0ZjVjMGIiLCJpYXQiOjE2Mjg4NjExNTV9.pqKiuVabFR3nB3tmXjh53I_IQUbzFiwBts5jHzHv7Yg'
-        fetch('http://smartbill-env.eba-bimkwri6.us-east-2.elasticbeanstalk.com/api/me/infomation',
+        fetch('http://englishit.xyz:3001/api/account/login',
             {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": '*',
-                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-                    "Access-Control-Allow-Credentials": "true",
-                    "auth-token": tokenID
-                }
-                // body: JSON.stringify({
-                //     firstName: "Nguyen Son",
-                //     lastName: "Nguyen",
-                //     email: "nguyenthanhson162001@gmail.com",
-                //     password: "123456",
-                // }),
+                method: "POST",
+                body: JSON.stringify({
+                    "email": "nguyenthanhson162001@gmail.com",
+                    "password": "123456"
+                })
             })
             .then(function (response) {
                 return response.json();

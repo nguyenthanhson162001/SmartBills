@@ -11,7 +11,12 @@ require('./config/db/mongo').connect()
 
 // config Enable All CORS Requests
 app.use(cors())
-
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, PATH");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use("/public", express.static('./public'));
 app.set('view engine', 'ejs');
 
