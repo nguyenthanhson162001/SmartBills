@@ -6,10 +6,10 @@ const Schema = mongoose.Schema;
 const Bill = new Schema({
     imageKey: String,
     total: { type: Number, default: -1 },
-    datetime: { type: String },
+    dateTime: { type: String, default: "" },
     address: { type: String, maxLength: 255, default: "" },
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
-    item: [
+    items: [
         {
             _id: false,
             name: { type: String, maxLength: 255, default: "" },
