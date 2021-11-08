@@ -5,7 +5,7 @@ const billValidation = (bill) => {
         total: Joi.number().
             required()
         ,
-        datetime: Joi.string()
+        dateTime: Joi.string()
             .max(100)
             .required()
         ,
