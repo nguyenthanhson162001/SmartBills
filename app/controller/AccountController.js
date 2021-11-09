@@ -24,7 +24,7 @@ class AccountController {
             send(false, 'Password not correct', '')
             return
         }
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '4h' })
         res.header('auth-token', token)
             .status(200).json({
                 status: true,
