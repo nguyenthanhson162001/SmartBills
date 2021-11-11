@@ -2,6 +2,8 @@ const Bill = require('..//.//models/bill')
 const Paginatoin_soft = require('../../util/paginationAndSoft')
 const BillValidation = require('..//..//config/validation/billValidation')
 const ConvertBill = require('../../util/convertBill')
+var mongoose = require('mongoose');
+
 const limit = 10
 var fs = require('fs');
 const { throws } = require('assert');
@@ -102,6 +104,50 @@ class billsController {
             .catch((err) => {
                 res.status(200).json({ status: false, error: "delete false bill not exist" })
             })
+    }
+    // [DELETE] api/bill/delete:id
+    async statistical(req, res) {
+        // Tong Doanh thu
+        var { month, year } = req.query
+        if (month == undefined)
+            month = new Date().getMonth() + 1
+        if (year == undefined)
+            year = new Date().getFullYear()
+        var id = mongoose.Types.ObjectId(req.userID);
+        console.log(month)
+        console.log(id)
+        // 
+        var monthStatistical = await Bill.aggregate([
+            { $match: { owner: id } },
+            {
+                $match: {
+                    $and: [
+                        { $expr: { $eq: [{ $month: '$createdAt' }, month] } },
+                        { $expr: { $eq: [{ $year: '$createdAt' }, year] } }]
+                }
+            }, {
+                $group: {
+                    _id: { $dayOfMonth: '$createdAt' },
+                    sum: { $sum: '$total' }, count: { $sum: 1 }
+                }
+            }, {
+                $sort: { _id: 1 }
+            },
+            {
+                $project: { _id: 0, day: '$_id', sum: 1, count: 1 }
+            }])
+
+
+        res.json({ monthStatistical })
+        // if (monthStatistical.length == 0) {
+
+        //     res.json({ count: 0, sum: 0, avg: 0 })
+        //     return
+        // }
+
+        // var { count, sum } = billSum[0]
+        // var avg = parseFloat(sum / count).toFixed(2)
+
     }
 }
 module.exports = new billsController();

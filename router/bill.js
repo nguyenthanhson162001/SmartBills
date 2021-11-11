@@ -11,5 +11,6 @@ router.get('/bills', softMiddleware, billsController.bills)
 router.get('/mybills', verifyMiddleware, softMiddleware, billsController.myBills)
 router.put('/edit/:id', verifyMiddleware, billsController.edit)
 router.delete('/delete/:id', verifyMiddleware, billsController.delete)
+router.get('/statistical', verifyMiddleware, billsController.statistical)
 router.get('/', (req, res) => res.render('this is page bill'))
 module.exports = router

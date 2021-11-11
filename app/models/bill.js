@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const Bill = new Schema({
     imageKey: String,
-    total: { type: Number, default: -1 },
+    total: { type: Number, default: 1 },
     dateTime: { type: String, default: "" },
     address: { type: String, maxLength: 255, default: "" },
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -13,8 +13,8 @@ const Bill = new Schema({
         {
             _id: false,
             name: { type: String, maxLength: 255, default: "" },
-            price: { type: Number, default: -1 },
-            quantity: { type: Number, default: -1 },
+            price: { type: Number, default: 1 },
+            quantity: { type: Number, default: 1 },
         }
     ],
 
