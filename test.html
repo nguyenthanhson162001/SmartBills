@@ -64,7 +64,7 @@
             <br>
             <input type="submit" class="btn-primary " value="Register">
         </form>
-
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <!-- <img src="http://localhost:3001/api/post/getimage/7a72b6a5a9f966421be56b4ea795a906" alt=""> -->
         <script>
             // $(document).ready(function () {
@@ -106,11 +106,11 @@
                 const formData = new FormData();
 
                 formData.append('image', fileInput.files[0]);
-                var retult = await fetch('https://tolbill.herokuapp.com/detect', {
+                var retult = await axios('https://tolbill.herokuapp.com/detect', {
                     method: 'POST',
-                    body: formData
+                    data: formData,
+                    headers: { "Content-Type": "multipart/form-data" },
                 })
-                result = retult.json()
                 console.log(result)
                 if (result) {
                     document.getElementById('result').innerHTML = ` Ok  `;

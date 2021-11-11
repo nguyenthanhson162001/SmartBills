@@ -44,7 +44,7 @@ class AccountController {
         const { email, password, firstName, lastName } = req.body
         const { error } = userValidation.registerValidation({ email, password, firstName, lastName })
         if (error) {
-            send(200, false, error.details[0].message + "Params")
+            send(200, false, error.details[0].message)
             return
         }
         // hash password
