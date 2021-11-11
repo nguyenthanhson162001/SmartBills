@@ -17,7 +17,7 @@ class billsController {
             return res.status(400).send('required image')
 
 
-        // console.log(await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`)))
+        console.log(await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`)))
         var { total, dateTime, address, items } = req.body
         items = [
             {
