@@ -46,6 +46,25 @@
             <button class=" btn btn-primary " type=" button" onclick="send()">Submit</button>
             </form>
         </div>
+        <div>
+            <br> <br><br>
+        </div>
+
+        <form class="form-group" method="post" action="http://54.254.67.104:3001/api/account/register">
+            <label for="">First Name</label>
+            <input type="text" name="firstName" id="firstName" class="form-control" placeholder=""
+                aria-describedby="helpId">
+            <label for="">last Name</label>
+            <input type="text" name="lastName" id="lastName" class="form-control" placeholder=""
+                aria-describedby="helpId">
+            <label for="">Email</label>
+            <input type="text" name="email" id="email" class="form-control" placeholder="" aria-describedby="helpId">
+            <label for="">Password</label>
+            <input type="text" name="password" id="" class="form-control" placeholder="" aria-describedby="helpId">
+            <br>
+            <input type="submit" class="btn-primary " value="Register">
+        </form>
+
         <!-- <img src="http://localhost:3001/api/post/getimage/7a72b6a5a9f966421be56b4ea795a906" alt=""> -->
         <script>
             // $(document).ready(function () {

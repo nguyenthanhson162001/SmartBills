@@ -2,6 +2,8 @@ const Bill = require('..//.//models/bill')
 const Paginatoin_soft = require('../../util/paginationAndSoft')
 const BillValidation = require('..//..//config/validation/billValidation')
 const ConvertBill = require('../../util/convertBill')
+var fetch = require("fetch");
+const StatisticalBill = require("../../util/StatisticalBill")
 var mongoose = require('mongoose');
 
 const limit = 10
@@ -17,9 +19,9 @@ class billsController {
         var { total, dateTime, address, items } = req.body
         items = [
             {
-                name: "Sữa",
-                price: 9000,
-                quantity: 20
+                name: "Bia",
+                price: 10000,
+                quantity: 10
             }
         ]
         var bill = new Bill({ imageKey: image.filename, total, dateTime, address, owner: req.userID, items })
@@ -108,46 +110,62 @@ class billsController {
     // [DELETE] api/bill/delete:id
     async statistical(req, res) {
         // Tong Doanh thu
-        var { month, year } = req.query
-        if (month == undefined)
-            month = new Date().getMonth() + 1
-        if (year == undefined)
-            year = new Date().getFullYear()
+        var { month = new Date().getMonth() + 1, year = new Date().getFullYear(), type = "day" } = req.query
         var id = mongoose.Types.ObjectId(req.userID);
-        console.log(month)
-        console.log(id)
-        // 
-        var monthStatistical = await Bill.aggregate([
-            { $match: { owner: id } },
-            {
-                $match: {
-                    $and: [
-                        { $expr: { $eq: [{ $month: '$createdAt' }, month] } },
-                        { $expr: { $eq: [{ $year: '$createdAt' }, year] } }]
-                }
-            }, {
-                $group: {
-                    _id: { $dayOfMonth: '$createdAt' },
-                    sum: { $sum: '$total' }, count: { $sum: 1 }
-                }
-            }, {
-                $sort: { _id: 1 }
-            },
-            {
-                $project: { _id: 0, day: '$_id', sum: 1, count: 1 }
-            }])
+        var sumAll = 0, countAll = 0;
 
-
-        res.json({ monthStatistical })
-        // if (monthStatistical.length == 0) {
-
-        //     res.json({ count: 0, sum: 0, avg: 0 })
-        //     return
-        // }
-
-        // var { count, sum } = billSum[0]
-        // var avg = parseFloat(sum / count).toFixed(2)
-
+        var result;
+        console.log(type)
+        switch (type) {
+            case "month":
+                result = await StatisticalBill.getMonthStatistical(id, parseInt(year))
+                result.forEach(function (e) {
+                    sumAll += e.sumTotal
+                    countAll += e.count
+                })
+                console.log(month)
+                break;
+            case "year":
+                result = await StatisticalBill.getYearStatistical(id)
+                result.forEach(function (e) {
+                    sumAll += e.sumTotal
+                    countAll += e.count
+                })
+                break;
+            default:
+                result = await await StatisticalBill.getDayStatistical(id, parseInt(month), parseInt(year))
+                result.forEach(function (e) {
+                    sumAll += e.sumTotal
+                    countAll += e.count
+                })
+        }
+        res.json({ sumAll, countAll, details: result })
     }
+}
+
+function send() {
+    const fileInput = document.querySelector('#your-file-input');
+    const formData = new FormData();
+
+    formData.append('image', fileInput.files[0]);
+    console.log(formData)
+
+    fetch('http://localhost:3001/api/bill/store', {
+        method: 'POST',
+        headers: {
+
+            'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyZTI3OGRhOTMyMzM3MTE3Y2EyMTYiLCJpYXQiOjE2MzY2MTQ2NDEsImV4cCI6MTYzNjYyOTA0MX0.2dvXIXetEfkEJ3BaORcEJV6q3q22WX9KhDwrCREAuHY'
+        },
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            document.getElementById('result').innerHTML = ` Ok  `;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('result').innerHTML = error;
+        });
 }
 module.exports = new billsController();
