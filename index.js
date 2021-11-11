@@ -21,10 +21,11 @@ app.use("/public", express.static('./public'));
 app.set('view engine', 'ejs');
 
 // parse application/json
-app.use(express.json()) // for parsing application/json
+app.use(express.json({ limit: '50mb' })) // for parsing application/json
 app.use(express.urlencoded({
-    extended: true
+    extended: true, limit: '50mb'
 }))
+// bodyParser.json({ limit: "50mb" })
 
 app.use(morgan('tiny'))
 router(app)

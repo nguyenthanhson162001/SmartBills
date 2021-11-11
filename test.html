@@ -27,7 +27,7 @@
 <body>
 
     <div class="container p-4 mt-4">
-        <form class="p-4" action="http://localhost:3001/api/post/store" method="post" enctype="multipart/form-data">
+        <div class="p-4" method="post" enctype="multipart/form-data">
             <h1 id='result'></h1>
             <!-- <div class="form-group">
                 <label for="name_post">Name</label>
@@ -40,72 +40,75 @@
                 <input type="file" name="image" id="image" class="form-control" placeholder="" aria-describedby="image">
                 <small id="helpId" class="text-muted"></small>
             </div> -->
-            <img src="http://ec2-54-255-234-108.ap-southeast-1.compute.amazonaws.com:3001/public/images/bills/a6c710387126f33a139e6603415c8937"
-                alt="" srcset="">
+            <!-- <img src="http://ec2-54-255-234-108.ap-southeast-1.compute.amazonaws.com:3001/public/images/bills/a6c710387126f33a139e6603415c8937"
+                alt="" srcset=""> -->
+            <input type="file" name="" id="your-file-input" class="btn btn-secondary">
+            <button class=" btn btn-primary " type=" button" onclick="send()">Submit</button>
+            </form>
+        </div>
+        <!-- <img src="http://localhost:3001/api/post/getimage/7a72b6a5a9f966421be56b4ea795a906" alt=""> -->
+        <script>
+            // $(document).ready(function () {
+            //     $(`button[type='submit']`).on('click', function (e) {
+            //         // e.preventDefault();
+            //         var name = $(`input[name='name_post']`).val()
+            //         var image = $(`input[name='image']`).val()
+            //         console.table({ name, image })
+            //     })
+            // });
 
-            <button class="btn btn-primary w-100" type="submit">Submit</button>
-        </form>
-    </div>
-    <!-- <img src="http://localhost:3001/api/post/getimage/7a72b6a5a9f966421be56b4ea795a906" alt=""> -->
-    <script>
-        // $(document).ready(function () {
-        //     $(`button[type='submit']`).on('click', function (e) {
-        //         // e.preventDefault();
-        //         var name = $(`input[name='name_post']`).val()
-        //         var image = $(`input[name='image']`).val()
-        //         console.table({ name, image })
-        //     })
-        // });
+            // var tokenID = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTE1Njk5OTUwNjY4MTNkYzg0ZjVjMGIiLCJpYXQiOjE2Mjg4NjExNTV9.pqKiuVabFR3nB3tmXjh53I_IQUbzFiwBts5jHzHv7Yg'
+            // fetch('http://smartbill-env.eba-bimkwri6.us-east-2.elasticbeanstalk.com/api/me/infomation',
+            //     {
+            //         method: "GET",
+            //         headers: {
+            //             Accept: "application/json",
+            //             "Content-Type": "application/json",
+            //             "Access-Control-Allow-Origin": '*',
+            //             "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+            //             "Access-Control-Allow-Credentials": "true",
+            //             "auth-token": tokenID
+            //         }
+            //         // body: JSON.stringify({
+            //         //     firstName: "Nguyen Son",
+            //         //     lastName: "Nguyen",
+            //         //     email: "nguyenthanhson162001@gmail.com",
+            //         //     password: "123456",
+            //         // }),
+            //     })
+            //     .then(function (response) {
+            //         return response.json();
+            //     })
+            //     .then(function (response) {
+            //         console.table(response)
+            //     });
+            function send() {
+                const fileInput = document.querySelector('#your-file-input');
+                const formData = new FormData();
 
-        // var tokenID = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTE1Njk5OTUwNjY4MTNkYzg0ZjVjMGIiLCJpYXQiOjE2Mjg4NjExNTV9.pqKiuVabFR3nB3tmXjh53I_IQUbzFiwBts5jHzHv7Yg'
-        // fetch('http://smartbill-env.eba-bimkwri6.us-east-2.elasticbeanstalk.com/api/me/infomation',
-        //     {
-        //         method: "GET",
-        //         headers: {
-        //             Accept: "application/json",
-        //             "Content-Type": "application/json",
-        //             "Access-Control-Allow-Origin": '*',
-        //             "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-        //             "Access-Control-Allow-Credentials": "true",
-        //             "auth-token": tokenID
-        //         }
-        //         // body: JSON.stringify({
-        //         //     firstName: "Nguyen Son",
-        //         //     lastName: "Nguyen",
-        //         //     email: "nguyenthanhson162001@gmail.com",
-        //         //     password: "123456",
-        //         // }),
-        //     })
-        //     .then(function (response) {
-        //         return response.json();
-        //     })
-        //     .then(function (response) {
-        //         console.table(response)
-        //     });
+                formData.append('image', fileInput.files[0]);
+                console.log(formData)
 
+                fetch('http://localhost:3001/api/bill/store', {
+                    method: 'POST',
+                    headers: {
 
-        fetch('http://ec2-54-255-234-108.ap-southeast-1.compute.amazonaws.com:3001/api/account/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "email": "nguyenthanhson162001@gmail.com",
-                "password": "123456"
-            }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                document.getElementById('result').innerHTML = `
-                ${data.status} - ${data.error} -  ${data.auth_token}
-                `;
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById('result').innerHTML = error;
-            });
-    </script>
+                        'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyZTI3OGRhOTMyMzM3MTE3Y2EyMTYiLCJpYXQiOjE2MzY2MTQ2NDEsImV4cCI6MTYzNjYyOTA0MX0.2dvXIXetEfkEJ3BaORcEJV6q3q22WX9KhDwrCREAuHY'
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        document.getElementById('result').innerHTML = ` Ok  `;
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        document.getElementById('result').innerHTML = error;
+                    });
+            }
+
+        </script>
 </body>
 
 </html>
