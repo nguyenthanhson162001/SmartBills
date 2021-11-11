@@ -32,7 +32,7 @@ class AccountController {
                 auth_token: token
             })
         function send(status, error, auth_token) {
-            res.status(400).json({
+            res.status(200).json({
                 status,
                 error,
                 auth_token
@@ -44,7 +44,7 @@ class AccountController {
         const { email, password, firstName, lastName } = req.body
         const { error } = userValidation.registerValidation({ email, password, firstName, lastName })
         if (error) {
-            send(400, false, error.details[0].message + "Params")
+            send(200, false, error.details[0].message + "Params")
             return
         }
         // hash password
@@ -52,7 +52,7 @@ class AccountController {
         // checking if the user is already in the database
         const emailExist = await User.findOne({ email })
         if (emailExist) {
-            send(400, false, 'Email already exist')
+            send(200, false, 'Email already exist')
             return
         }
 
