@@ -44,7 +44,7 @@ class AccountController {
         const { email, password, firstName, lastName } = req.body
         const { error } = userValidation.registerValidation({ email, password, firstName, lastName })
         if (error) {
-            send(500, false, error.details[0].message)
+            send(500, false, error.details[0].message + "Params")
             return
         }
         // hash password
@@ -69,10 +69,10 @@ class AccountController {
         try {
             const saveUser = await user.save();
             // const token = jwt.sign({ _id: saveUser._id }, process.env.JWT_SECRET)
-            send(500, true, '')
+            send(200, true, '')
 
         } catch (error) {
-            send(500, false, 'Server save error')
+            send(500, false, 'Server SAVE error')
         }
         function send(numberStatus, status, error) {
             res.status(numberStatus).json({

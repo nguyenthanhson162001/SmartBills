@@ -2,7 +2,7 @@ const Bill = require('..//.//models/bill')
 const Paginatoin_soft = require('../../util/paginationAndSoft')
 const BillValidation = require('..//..//config/validation/billValidation')
 const ConvertBill = require('../../util/convertBill')
-var fetch = require("fetch");
+const Analysis = require('../../util/Analysis')
 const StatisticalBill = require("../../util/StatisticalBill")
 var mongoose = require('mongoose');
 
@@ -16,6 +16,8 @@ class billsController {
         if (!image)
             return res.status(400).send('required image')
 
+
+        // console.log(await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`)))
         var { total, dateTime, address, items } = req.body
         items = [
             {
@@ -94,8 +96,7 @@ class billsController {
                     res.status(200).json({ status: true, error: "" })
                     fs.unlink(`${process.cwd()}/public/images/bills/${billOld.imageKey}`, function (err) {
                         if (err) throw err;
-                        console.log('File deleted!');
-                        console.log(`${process.cwd()}/public/images/bills/${billOld.imageKey}`)
+                        // console.log('File deleted!');
                     });
 
                 }).catch(err => {
@@ -115,7 +116,6 @@ class billsController {
         var sumAll = 0, countAll = 0;
 
         var result;
-        console.log(type)
         switch (type) {
             case "month":
                 result = await StatisticalBill.getMonthStatistical(id, parseInt(year))
@@ -143,29 +143,5 @@ class billsController {
     }
 }
 
-function send() {
-    const fileInput = document.querySelector('#your-file-input');
-    const formData = new FormData();
 
-    formData.append('image', fileInput.files[0]);
-    console.log(formData)
-
-    fetch('http://localhost:3001/api/bill/store', {
-        method: 'POST',
-        headers: {
-
-            'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyZTI3OGRhOTMyMzM3MTE3Y2EyMTYiLCJpYXQiOjE2MzY2MTQ2NDEsImV4cCI6MTYzNjYyOTA0MX0.2dvXIXetEfkEJ3BaORcEJV6q3q22WX9KhDwrCREAuHY'
-        },
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            document.getElementById('result').innerHTML = ` Ok  `;
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            document.getElementById('result').innerHTML = error;
-        });
-}
 module.exports = new billsController();

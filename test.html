@@ -101,30 +101,31 @@
             //     .then(function (response) {
             //         console.table(response)
             //     });
-            function send() {
+            async function send() {
                 const fileInput = document.querySelector('#your-file-input');
                 const formData = new FormData();
 
                 formData.append('image', fileInput.files[0]);
-                console.log(formData)
-
-                fetch('http://localhost:3001/api/bill/store', {
+                var retult = await fetch('https://tolbill.herokuapp.com/detect', {
                     method: 'POST',
-                    headers: {
-
-                        'auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyZTI3OGRhOTMyMzM3MTE3Y2EyMTYiLCJpYXQiOjE2MzY2MTQ2NDEsImV4cCI6MTYzNjYyOTA0MX0.2dvXIXetEfkEJ3BaORcEJV6q3q22WX9KhDwrCREAuHY'
-                    },
                     body: formData
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        document.getElementById('result').innerHTML = ` Ok  `;
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        document.getElementById('result').innerHTML = error;
-                    });
+                result = retult.json()
+                console.log(result)
+                if (result) {
+                    document.getElementById('result').innerHTML = ` Ok  `;
+                } else {
+                    document.getElementById('result').innerHTML = ` Error  `;
+                }
+                // .then(response => response.json())
+                // .then(data => {
+                //     console.log('Success:', data);
+                //     document.getElementById('result').innerHTML = ` Ok  `;
+                // })
+                // .catch((error) => {
+                //     console.error('Error:', error);
+                //     document.getElementById('result').innerHTML = error;
+                // });
             }
 
         </script>
