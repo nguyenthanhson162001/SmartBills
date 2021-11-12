@@ -16,23 +16,45 @@ class billsController {
         if (!image)
             return res.status(400).send('required image')
 
-        // console.log(await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`)))
-
-        var { total, dateTime, address, items } = req.body
-        items = [
+        var items = [
             {
-                name: "Bia",
-                price: 10000,
-                quantity: 10
+                "name": "Sữa",
+                "price": 9000,
+                "quantity": 20
+            }, {
+                "name": "Bia",
+                "price": 12000,
+                "quantity": 10
+            }, {
+                "name": "Nước ngọt",
+                "price": 10000,
+                "quantity": 10
             }
         ]
-        var bill = new Bill({ imageKey: image.filename, total, dateTime, address, owner: req.userID, items })
-        console.log(bill)
-        bill.save().then(function () {
-            res.status(200).json({ status: true, bill: ConvertBill.convert(bill) })
-        }).catch(function (err) {
-            res.status(200).json({ status: false, bill: ConvertBill.convert(bill) })
-        })
+        var bill2 = new Bill({ imageKey: image.filename, total: 400, dateTime: '2021/10/10', address: 'Dương quản hàm Gò vấp', owner: req.userID, items })
+        res.status(200).json({ status: true, bill: ConvertBill.convert(bill2), error: '' })
+        return
+        try {
+            var analysis = await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`))
+            var { total, dateTime, address, items } = analysis.data
+            var bill = new Bill({ imageKey: image.filename, total, dateTime, address, owner: req.userID, items })
+            var totalCacurator = 0;
+            bill.items.forEach((e) => {
+                totalCacurator += e.price * e.quantity
+            })
+            if (bill.total < totalCacurator) {
+                bill.total = totalCacurator
+            }
+            bill.save().then(function () {
+                res.status(200).json({ status: true, bill: ConvertBill.convert(bill), error: '' })
+            }).catch(function (err) {
+                res.status(200).json({ status: false, bill: ConvertBill.convert(bill), error: 'server save ' + err })
+            })
+            return
+        } catch (error) {
+            console.log(error)
+            res.status(200).json({ status: false, bill: new Bill(), error: 'server AI ' + error })
+        }
     }
     // [GET] api/bill/bills
     async bills(req, res) {

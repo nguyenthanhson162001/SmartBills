@@ -104,15 +104,18 @@
             async function send() {
                 const fileInput = document.querySelector('#your-file-input');
                 const formData = new FormData();
-
+                // https://tolbill.herokuapp.com/detect
                 formData.append('image', fileInput.files[0]);
-                var retult = await axios('https://tolbill.herokuapp.com/detect', {
+                var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTc0YjNhMjIyYjg0MjFkMzRiMDZlN2IiLCJpYXQiOjE2MzY3MDExNDYsImV4cCI6MTYzNjcxNTU0Nn0.Fz6fH403M_x3e1etAnBH4IA5Kfc2vdJi5DwAtlkJhGU'
+                console.log(fileInput.files[0])
+                var retulta = await axios('http://localhost:3001/api/bill/store', {
                     method: 'POST',
                     data: formData,
-                    headers: { "Content-Type": "multipart/form-data" },
+                    headers: { "Content-Type": "multipart/form-data", 'auth-token': token },
                 })
-                console.log(result)
-                if (result) {
+
+                if (retulta) {
+                    console.log(retulta.data)
                     document.getElementById('result').innerHTML = ` Ok  `;
                 } else {
                     document.getElementById('result').innerHTML = ` Error  `;
