@@ -2,6 +2,7 @@ const User = require('..//models/user')
 const userValidation = require('..//..//config/validation/userValidation')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const nodemailer_config = require('..//..//config/mail/nodemailer')
 require('dotenv').config()
 class AccountController {
     // [POST] api/account/login
@@ -48,7 +49,6 @@ class AccountController {
             return
         }
         // hash password
-
         // checking if the user is already in the database
         const emailExist = await User.findOne({ email })
         if (emailExist) {
@@ -56,24 +56,31 @@ class AccountController {
             return
         }
 
-        const salt = await bcryptjs.genSalt(12)
-        const hashedPassword = await bcryptjs.hash(password, salt)
-        // create new user
+        // const salt = await bcrypt.genSalt(parseInt(process.env.SALROUNDSNUMBER))
         const user = new User({
             lastName: lastName.toLowerCase(),
             firstName: firstName.toLowerCase(),
             provider: 'local',
-            email: email.toLowerCase(),
-            password: hashedPassword
+            email: email.toLowerCase()
         })
-        try {
-            const saveUser = await user.save();
-            // const token = jwt.sign({ _id: saveUser._id }, process.env.JWT_SECRET)
-            send(200, true, '')
 
-        } catch (error) {
-            send(500, false, 'Server SAVE error')
-        }
+        const hasherPassword = await bcryptjs.hash(password, parseInt(process.env.SALROUNDSNUMBER))
+        user.password = hasherPassword
+        console.log(hasherPassword)
+        console.log(process.env.JWT_ACC_ACTIVE,)
+        const token = jwt.sign({ user }, process.env.JWT_ACC_ACTIVE, { expiresIn: '30m' })
+        console.log(token)
+        var message = `<h3>Chào ${req.body.firstName} ${req.body.lastName}</h3> <span> Cảm ơn bạn đã đăng nhập vào
+        <a href='http://${req.headers.host}' >http://${req.headers.host}</a> </span> <br>
+            <span> Nếu đây là bạn vui lòng <a href='http://${req.headers.host}/api/account/verify/${token}'> nhấn vào đây để xác thực tài khoảng</a></span> <br>
+                <small>*** Đường dẫn chỉ có hiệu lực trong 30 phút <small>
+                    `
+        nodemailer_config.sendEmail(req.body.email, 'Xác thực tài khoảng TOL GRROP', message)
+        res.json({
+            status: true,
+            error: ""
+        })
+
         function send(numberStatus, status, error) {
             res.status(numberStatus).json({
                 status,
@@ -81,5 +88,24 @@ class AccountController {
             })
         }
     }
+    // [POST] api/account/verify
+    async verifyEmail(req, res) {
+        // create new user
+        const { token } = req.params
+        if (!token) {
+            res.send('Invalid token')
+        }
+        jwt.verify(token, process.env.JWT_ACC_ACTIVE, function (err, data) {
+            if (err || !data || !data.user) {
+                res.send('Xác thực tài khoảng thất bại')
+                return
+            }
+            const { user } = data
+
+            new User(user).save()
+            res.send('Xác thực tài khoảng thành công')
+        })
+    }
+
 }
 module.exports = new AccountController;
