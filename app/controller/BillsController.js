@@ -15,25 +15,6 @@ class billsController {
         const image = req.file
         if (!image)
             return res.status(400).send('required image')
-
-        var items = [
-            {
-                "name": "Sữa",
-                "price": 9000,
-                "quantity": 20
-            }, {
-                "name": "Bia",
-                "price": 12000,
-                "quantity": 10
-            }, {
-                "name": "Nước ngọt",
-                "price": 10000,
-                "quantity": 10
-            }
-        ]
-        var bill2 = new Bill({ imageKey: image.filename, total: 400, dateTime: '2021/10/10', address: 'Dương quản hàm Gò vấp', owner: req.userID, items })
-        res.status(200).json({ status: true, bill: ConvertBill.convert(bill2), error: '' })
-        return
         try {
             var analysis = await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`))
             var { total, dateTime, address, items } = analysis.data
@@ -130,13 +111,12 @@ class billsController {
                 res.status(200).json({ status: false, error: "delete false bill not exist" })
             })
     }
-    // [DELETE] api/bill/delete:id
+    // [GET] api/bill/statistical
     async statistical(req, res) {
         // Tong Doanh thu
         var { month = new Date().getMonth() + 1, year = new Date().getFullYear(), type = "day" } = req.query
         var id = mongoose.Types.ObjectId(req.userID);
         var sumAll = 0, countAll = 0;
-
         var result;
         switch (type) {
             case "month":
@@ -145,7 +125,6 @@ class billsController {
                     sumAll += e.sumTotal
                     countAll += e.count
                 })
-                console.log(month)
                 break;
             case "year":
                 result = await StatisticalBill.getYearStatistical(id)
@@ -161,7 +140,19 @@ class billsController {
                     countAll += e.count
                 })
         }
-        res.json({ sumAll, countAll, details: result })
+        res.json({ sumAll, countAll, type, details: result })
+    }
+    // [GET] api/bill/percent-growth-rate-with-month
+    async growthRateWithMonth(req, res) {
+        var { month = new Date().getMonth() + 1, year = new Date().getFullYear() } = req.query
+        var id = mongoose.Types.ObjectId(req.userID);
+
+        res.json(await StatisticalBill.getGrowthRateTotalWithMonth(id, parseInt(month), parseInt(year)))
+    }
+    // [GET] api/bill/statistical-overview
+    async statisticalOverview(req, res) {
+        var id = mongoose.Types.ObjectId(req.userID);
+        res.json(await StatisticalBill.overview(id))
     }
 }
 

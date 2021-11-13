@@ -98,5 +98,20 @@ class StatisticalBill {
         }
 
     }
+    async overview(owner) {
+        // ,
+        return await Bill.aggregate([{ $match: { owner: owner } },
+        {
+            $group: {
+                _id: null,
+                sumTotal: { $sum: '$total' }, count: { $sum: 1 }
+            }
+        }, {
+            $sort: { _id: 1 }
+        },
+        {
+            $project: { _id: 0, sumTotal: 1, count: 1 }
+        }])
+    }
 }
 module.exports = new StatisticalBill();
