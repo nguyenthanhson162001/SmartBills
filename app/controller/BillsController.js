@@ -20,6 +20,7 @@ class billsController {
             var { total, dateTime, address, items } = analysis.data
             var bill = new Bill({ imageKey: image.filename, total, dateTime, address, owner: req.userID, items })
             var totalCacurator = 0;
+            console.log(analysis.data)
             bill.items.forEach((e) => {
                 totalCacurator += e.price * e.quantity
             })
