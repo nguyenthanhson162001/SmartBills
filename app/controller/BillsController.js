@@ -117,31 +117,31 @@ class billsController {
         // Tong Doanh thu
         var { month = new Date().getMonth() + 1, year = new Date().getFullYear(), type = "day" } = req.query
         var id = mongoose.Types.ObjectId(req.userID);
-        var sumAll = 0, countAll = 0;
+        var sumAllTotalBill = 0, countAllBill = 0;
         var result;
         switch (type) {
             case "month":
                 result = await StatisticalBill.getMonthStatistical(id, parseInt(year))
                 result.forEach(function (e) {
-                    sumAll += e.sumTotal
-                    countAll += e.count
+                    sumAllTotalBill += e.sumTotal
+                    countAllBill += e.countBill
                 })
                 break;
             case "year":
                 result = await StatisticalBill.getYearStatistical(id)
                 result.forEach(function (e) {
-                    sumAll += e.sumTotal
-                    countAll += e.count
+                    sumAllTotalBill += e.sumTotal
+                    countAllBill += e.countBill
                 })
                 break;
             default:
-                result = await await StatisticalBill.getDayStatistical(id, parseInt(month), parseInt(year))
+                result = await StatisticalBill.getDayStatistical(id, parseInt(month), parseInt(year))
                 result.forEach(function (e) {
-                    sumAll += e.sumTotal
-                    countAll += e.count
+                    sumAllTotalBill += e.sumTotal
+                    countAllBill += e.countBill
                 })
         }
-        res.json({ sumAll, countAll, type, details: result })
+        res.json({ sumAllTotalBill, countAllBill, type, details: result })
     }
     // [GET] api/bill/percent-growth-rate-with-month
     async growthRateWithMonth(req, res) {

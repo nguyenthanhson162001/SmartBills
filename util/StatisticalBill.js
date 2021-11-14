@@ -1,7 +1,7 @@
 const Bill = require('..//app/models/bill')
 class StatisticalBill {
     async getDayStatistical(owner, month, year) {
-        return await Bill.aggregate([
+        var bills = await Bill.aggregate([
             { $match: { owner: owner } },
             {
                 $match: {
@@ -12,14 +12,16 @@ class StatisticalBill {
             }, {
                 $group: {
                     _id: { $dayOfMonth: '$createdAt' },
-                    sumTotal: { $sum: '$total' }, count: { $sum: 1 }
+                    sumTotal: { $sum: '$total' }, countBill: { $sum: 1 }
                 }
             }, {
                 $sort: { _id: 1 }
             },
             {
-                $project: { _id: 0, title: '$_id', sumTotal: 1, count: 1 }
+                $project: { _id: 0, date: '$_id', sumTotal: 1, countBill: 1 }
             }])
+
+        return bills;
     }
     async getMonthStatistical(owner, year) {
         return await Bill.aggregate([
@@ -32,13 +34,13 @@ class StatisticalBill {
             }, {
                 $group: {
                     _id: { $month: '$createdAt' },
-                    sumTotal: { $sum: '$total' }, count: { $sum: 1 }
+                    sumTotal: { $sum: '$total' }, countBill: { $sum: 1 }
                 }
             }, {
                 $sort: { _id: 1 }
             },
             {
-                $project: { _id: 0, title: '$_id', sumTotal: 1, count: 1 }
+                $project: { _id: 0, date: '$_id', sumTotal: 1, countBill: 1 }
             }])
     }
     async getYearStatistical(owner) {
@@ -47,13 +49,13 @@ class StatisticalBill {
             {
                 $group: {
                     _id: { $year: '$createdAt' },
-                    sumTotal: { $sum: '$total' }, count: { $sum: 1 }
+                    sumTotal: { $sum: '$total' }, countBill: { $sum: 1 }
                 }
             }, {
                 $sort: { _id: 1 }
             },
             {
-                $project: { _id: 0, title: '$_id', sumTotal: 1, count: 1 }
+                $project: { _id: 0, date: '$_id', sumTotal: 1, countBill: 1 }
             }])
     }
     // cacurator precent growth rate total Between prevent month and month present
@@ -80,7 +82,7 @@ class StatisticalBill {
                 $sort: { _id: -1 }
             },
             {
-                $project: { _id: 0, title: '$_id', sumTotal: 1 }
+                $project: { _id: 0, date: '$_id', sumTotal: 1 }
             }])
         // console.log()
         var percent
@@ -104,13 +106,13 @@ class StatisticalBill {
         {
             $group: {
                 _id: null,
-                sumTotal: { $sum: '$total' }, count: { $sum: 1 }
+                sumTotalBill: { $sum: '$total' }, countBill: { $sum: 1 }
             }
         }, {
             $sort: { _id: 1 }
         },
         {
-            $project: { _id: 0, sumTotal: 1, count: 1 }
+            $project: { _id: 0, sumTotalBill: 1, countBill: 1 }
         }])
     }
 }
