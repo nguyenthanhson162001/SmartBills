@@ -105,17 +105,32 @@
                 const fileInput = document.querySelector('#your-file-input');
                 const formData = new FormData();
                 // https://tolbill.herokuapp.com/detect
-                formData.append('image', fileInput.files[0]);
-                var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTc0YjNhMjIyYjg0MjFkMzRiMDZlN2IiLCJpYXQiOjE2MzY3MDExNDYsImV4cCI6MTYzNjcxNTU0Nn0.Fz6fH403M_x3e1etAnBH4IA5Kfc2vdJi5DwAtlkJhGU'
-                console.log(fileInput.files[0])
-                var retulta = await axios('http://localhost:3001/api/bill/store', {
-                    method: 'POST',
-                    data: formData,
-                    headers: { "Content-Type": "multipart/form-data", 'auth-token': token },
-                })
 
-                if (retulta) {
-                    console.log(retulta.data)
+
+                formData.append("image", fileInput.files[0], 'image.png');
+
+                var retult = await fetch("http://localhost:3001/api/bill/store", {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "auth_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTc0YjNhMjIyYjg0MjFkMzRiMDZlN2IiLCJpYXQiOjE2MzY5MDQwODksImV4cCI6MTYzNjkxODQ4OX0.I4k-9XVgIrZ9lT1CgY2w1kOA4wqyItguEFFtHZdtW80"
+
+                    },
+                    body: formData,
+                });
+                console.log(result)
+
+
+                // var token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTc0YjNhMjIyYjg0MjFkMzRiMDZlN2IiLCJpYXQiOjE2MzY3MDExNDYsImV4cCI6MTYzNjcxNTU0Nn0.Fz6fH403M_x3e1etAnBH4IA5Kfc2vdJi5DwAtlkJhGU'
+                // console.log(fileInput.files[0])
+                // var retulta = await axios('http://localhost:3001/api/bill/store', {
+                //     method: 'POST',
+                //     data: formData,
+                //     headers: { "Content-Type": "multipart/form-data", 'auth-token': token },
+                // })
+
+                if (retult) {
+                    console.log(retulta)
                     document.getElementById('result').innerHTML = ` Ok  `;
                 } else {
                     document.getElementById('result').innerHTML = ` Error  `;
