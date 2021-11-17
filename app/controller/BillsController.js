@@ -15,7 +15,36 @@ class billsController {
         const image = req.file
         if (!image)
             return res.status(400).send('required image')
+        var test = new Bill({
+            imageKey: image.filename,
+            total: 556000, dateTime: '2021/11/18',
+            address: "Số 4 Nguyễn Văn bảo", owner: req.userID,
+            items: [{
+                name: "Bia",
+                price: 12,
+                quantity: 24
+            }, {
+                name: "Sữa",
+                price: 7,
+                quantity: 9
+            }, {
+                name: "Nước dừa",
+                price: 15,
+                quantity: 3
+            }, {
+                name: "Bò cụng",
+                price: 10,
+                quantity: 6
+            }, {
+                name: "Bia hơi",
+                price: 20000,
+                quantity: 5
+            },
+            ]
+        });
+        res.json({ status: true, bill: ConvertBill.convert(test), error: '' })
         var bill;
+        return;
         try {
             var analysis = await Analysis(fs.readFileSync(`${process.cwd()}/public/images/bills/${image.filename}`))
             var { total, dateTime, address, items } = await analysis.json();
@@ -31,6 +60,7 @@ class billsController {
             imageKey: image.filename, total: bill.total, dateTime: bill.dateTime,
             address: bill.address, owner: req.userID, items: bill.items
         })
+        console.log(bill2)
         var totalCacurator = 0;
         bill.items.forEach((e) => {
             totalCacurator += e.price * e.quantity
