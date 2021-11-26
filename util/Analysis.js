@@ -5,7 +5,7 @@ var FormData = require('form-data');
 async function analysis(image) {
     let formData = new FormData();
     formData.append("image", image, "image.png");
-    var retult = await fetch('http://localhost:5000/detect', {
+    var retult = await fetch('https://tolbill.herokuapp.com/detect', {
         method: "POST",
         headers: {
             'Accept': 'application/json',
